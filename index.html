@@ -63,6 +63,9 @@ body.light nav{background:rgba(244,244,242,.82);color:#111;border-color:rgba(0,0
     opacity:.72;transition:.3s
 }
 .nav-links a:hover{opacity:1}
+.nav-links a.active{opacity:1;color:#fff}
+.nav-links a.active::after{content:"";display:block;width:100%;height:1px;margin-top:7px;background:currentColor}
+body.light .nav-links a.active{color:#111}
 .nav-actions{display:flex;gap:10px;align-items:center}
 .icon-btn{
     position:relative;width:44px;height:44px;border-radius:50%;
@@ -158,7 +161,7 @@ body.light .icon-btn{background:#fff;color:#111;border-color:#ccc}
 @keyframes marquee{to{transform:translateX(-50%)}}
 
 /* GENERAL */
-section{padding:110px 7%;background:#050505}
+section{padding:110px 7%;background:#050505;scroll-margin-top:96px}
 .section-head{display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:55px}
 .section-label{font-size:10px;letter-spacing:4px;color:#777;text-transform:uppercase}
 .section-title{font-size:clamp(42px,6vw,80px);line-height:.92;letter-spacing:-4px;margin-top:12px}
@@ -382,7 +385,7 @@ body.light .tutorial-box{background:#111;color:#fff}
 <div class="loader" id="loader"><div class="loader-text">CALIX</div></div>
 
 <nav id="navbar">
-    <a class="logo" href="#">CALIX</a>
+    <a class="logo" href="#home" aria-label="CALIX Home">CALIX</a>
 
     <div class="nav-links">
         <a href="#skills">Skills</a>
@@ -850,16 +853,87 @@ const observer=new IntersectionObserver(entries=>{
 },{threshold:.1});
 function observeReveal(){document.querySelectorAll(".reveal").forEach(el=>observer.observe(el))}
 
-/* NAV + PARALLAX */
+/* NAV + TEXT SCROLL NAVIGATION + PARALLAX */
+const navLinks=[...document.querySelectorAll(".nav-links a")];
+const navSections=["home","skills","equipment","roadmap","start"];
+
+function setActiveNav(id){
+    navLinks.forEach(link=>{
+        const active=link.getAttribute("href")===`#${id}`;
+        link.classList.toggle("active",active);
+        if(active) link.setAttribute("aria-current","page");
+        else link.removeAttribute("aria-current");
+    });
+}
+
+function scrollToSection(id){
+    const target=document.getElementById(id);
+    if(!target)return;
+    const navHeight=document.getElementById("navbar").offsetHeight;
+    const top=Math.max(0,target.getBoundingClientRect().top+window.scrollY-navHeight);
+    window.scrollTo({top,behavior:"smooth"});
+    setActiveNav(id);
+
+    if(window.innerWidth<=700){
+        document.querySelector(".nav-links").style.display="none";
+    }
+}
+
+navLinks.forEach(link=>{
+    link.addEventListener("click",e=>{
+        const href=link.getAttribute("href");
+        if(!href || !href.startsWith("#"))return;
+        const id=href.slice(1);
+        if(document.getElementById(id)){
+            e.preventDefault();
+            scrollToSection(id);
+            history.replaceState(null,"",`#${id}`);
+        }
+    });
+});
+
+const navObserver=new IntersectionObserver(entries=>{
+    const visible=entries
+        .filter(entry=>entry.isIntersecting)
+        .sort((a,b)=>b.intersectionRatio-a.intersectionRatio);
+    if(visible.length) setActiveNav(visible[0].target.id);
+},{
+    rootMargin:"-25% 0px -55% 0px",
+    threshold:[0.05,0.15,0.3,0.5]
+});
+
+navSections.forEach(id=>{
+    const section=document.getElementById(id);
+    if(section) navObserver.observe(section);
+});
+
+let scrollTick=false;
 window.addEventListener("scroll",()=>{
     const y=window.scrollY;
     document.getElementById("navbar").classList.toggle("scrolled",y>30);
+
     const content=document.querySelector(".hero-content");
     if(content&&y<innerHeight){
         content.style.transform=`translateY(${y*.08}px)`;
         content.style.opacity=Math.max(.08,1-y/(innerHeight*.82));
     }
+
+    if(!scrollTick){
+        requestAnimationFrame(()=>{
+            let current="home";
+            const navHeight=document.getElementById("navbar").offsetHeight;
+            navSections.forEach(id=>{
+                const section=document.getElementById(id);
+                if(section && y+navHeight+120>=section.offsetTop) current=id;
+            });
+            setActiveNav(current);
+            scrollTick=false;
+        });
+        scrollTick=true;
+    }
 });
+
+setActiveNav(location.hash ? location.hash.slice(1) : "home");
 
 /* IMAGE FALLBACK */
 document.addEventListener("error",e=>{
