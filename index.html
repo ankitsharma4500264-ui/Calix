@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CALIX — Calisthenics Skill Academy</title>
+<meta name="description" content="CALIX — a cinematic calisthenics skill academy with structured progressions, daily routines, tutorials and equipment.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+:root{
+    --bg:#050505;
+    --panel:#0c0c0c;
+    --panel2:#111;
+    --white:#f5f5f5;
+    --muted:#999;
+    --line:#262626;
+    --soft-line:rgba(255,255,255,.12);
+}
+body{
+    font-family:Inter,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--white);
+    overflow-x:hidden;
+}
+body.light{background:#f4f4f2;color:#111}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+img{display:block;max-width:100%}
+
+/* LOADER */
+.loader{
+    position:fixed;inset:0;background:#000;z-index:9999;
+    display:grid;place-items:center;transition:.7s ease;
+}
+.loader.hide{opacity:0;visibility:hidden}
+.loader-text{
+    font-size:42px;font-weight:900;letter-spacing:12px;
+    animation:pulse 1s ease-in-out infinite alternate;
+}
+@keyframes pulse{from{opacity:.25;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+
+/* NAV */
+nav{
+    position:fixed;top:0;left:0;width:100%;height:96px;z-index:1000;
+    padding:0 6.5%;display:flex;align-items:center;justify-content:space-between;
+    background:rgba(0,0,0,.58);backdrop-filter:blur(18px);
+    border-bottom:1px solid rgba(255,255,255,.12);
+    transition:.35s;
+}
+nav.scrolled{background:rgba(0,0,0,.84)}
+body.light nav{background:rgba(244,244,242,.82);color:#111;border-color:rgba(0,0,0,.1)}
+.logo{font-size:31px;font-weight:900;letter-spacing:8px}
+.nav-links{display:flex;align-items:center;gap:39px}
+.nav-links a{
+    font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+    opacity:.72;transition:.3s
+}
+.nav-links a:hover{opacity:1}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.icon-btn{
+    position:relative;width:44px;height:44px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.3);
+    color:#fff;display:grid;place-items:center;transition:.3s;
+}
+.icon-btn:hover{background:#fff;color:#000;transform:translateY(-2px)}
+body.light .icon-btn{background:#fff;color:#111;border-color:#ccc}
+.cart-count{
+    position:absolute;top:-5px;right:-4px;width:18px;height:18px;border-radius:50%;
+    display:grid;place-items:center;background:#fff;color:#000;font-size:9px;font-weight:800;
+}
+.menu{display:none}
+
+/* HERO */
+.hero{
+    position:relative;min-height:100svh;height:100vh;display:flex;align-items:center;
+    padding:0 7%;overflow:hidden;isolation:isolate;background:#050505;
+}
+.hero::before{
+    content:"";position:absolute;inset:0;z-index:-3;
+    background-image:
+        linear-gradient(90deg,rgba(0,0,0,.96) 0%,rgba(0,0,0,.84) 26%,rgba(0,0,0,.34) 61%,rgba(0,0,0,.55) 100%),
+        linear-gradient(0deg,rgba(0,0,0,.9) 0%,transparent 42%,rgba(0,0,0,.34) 100%),
+        url("ankiyt.png");
+    background-size:cover;background-position:center;
+    transform:scale(1.04);
+    animation:heroZoom 16s ease-in-out infinite alternate;
+}
+.hero::after{
+    content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
+    background:radial-gradient(circle at 72% 48%,transparent 0%,rgba(0,0,0,.08) 35%,rgba(0,0,0,.68) 100%);
+}
+@keyframes heroZoom{
+    from{transform:scale(1.04) translate3d(0,0,0)}
+    to{transform:scale(1.08) translate3d(-10px,-5px,0)}
+}
+.hero-content{
+    width:61%;max-width:820px;padding-top:80px;position:relative;z-index:5;
+    transition:transform .1s linear,opacity .1s linear;
+}
+.eyebrow{
+    display:flex;align-items:center;gap:15px;margin-bottom:26px;
+    font-size:10px;letter-spacing:5px;text-transform:uppercase;color:#ddd;
+}
+.eyebrow::after{content:"";width:70px;height:1px;background:#bbb}
+.hero h1{
+    font-family:Impact,"Arial Narrow",Inter,sans-serif;
+    font-size:clamp(56px,7.6vw,122px);line-height:.83;letter-spacing:-4px;
+    text-transform:uppercase;font-weight:900;text-shadow:0 8px 35px rgba(0,0,0,.7);
+}
+.hero h1 span{display:block}
+.hero h1 .outline{color:transparent;-webkit-text-stroke:1.5px #fff;text-shadow:none}
+.hero p{
+    max-width:555px;margin-top:34px;color:#ddd;font-size:14px;line-height:1.85;opacity:.84
+}
+.hero-buttons{display:flex;gap:13px;flex-wrap:wrap;margin-top:32px}
+.btn{
+    position:relative;display:inline-flex;align-items:center;justify-content:center;
+    min-height:50px;padding:14px 25px;border:1px solid rgba(255,255,255,.75);
+    background:rgba(255,255,255,.04);color:#fff;border-radius:0;
+    text-transform:uppercase;letter-spacing:1.8px;font-size:10px;font-weight:600;
+    overflow:hidden;transition:.3s;backdrop-filter:blur(7px)
+}
+.btn:hover{background:#fff;color:#000;transform:translateY(-2px)}
+.btn.primary{background:#fff;color:#000}
+.btn.primary:hover{background:#000;color:#fff;border-color:#fff}
+.btn.full{width:100%}
+.btn.small{min-height:38px;padding:9px 15px;font-size:9px}
+.btn.shine::after{
+    content:"";position:absolute;top:0;left:-100%;width:55%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);
+    transform:skewX(-20deg);animation:shine 3s infinite;
+}
+@keyframes shine{0%,55%{left:-100%}100%{left:180%}}
+
+/* floating side words */
+.hero-side{
+    position:absolute;right:2.7%;top:50%;transform:translateY(-50%);
+    writing-mode:vertical-rl;text-orientation:mixed;
+    display:flex;gap:22px;font-size:10px;letter-spacing:4px;color:#aaa;z-index:3;
+}
+.hero-scroll{
+    position:absolute;bottom:28px;left:7%;font-size:9px;letter-spacing:3px;
+    color:#aaa;display:flex;gap:12px;align-items:center
+}
+.hero-scroll::after{content:"";width:70px;height:1px;background:#777}
+
+/* MARQUEE */
+.marquee{overflow:hidden;border-top:1px solid #222;border-bottom:1px solid #222;background:#050505;padding:20px 0;white-space:nowrap}
+.marquee-track{display:inline-flex;animation:marquee 26s linear infinite}
+.marquee span{font-size:10px;letter-spacing:5px;font-weight:600;color:#999;margin-right:55px}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* GENERAL */
+section{padding:110px 7%;background:#050505}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:55px}
+.section-label{font-size:10px;letter-spacing:4px;color:#777;text-transform:uppercase}
+.section-title{font-size:clamp(42px,6vw,80px);line-height:.92;letter-spacing:-4px;margin-top:12px}
+.section-description{max-width:420px;color:#888;font-size:13px;line-height:1.9}
+
+/* SKILLS */
+.skill-filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:28px}
+.filter-btn{
+    padding:10px 17px;background:#0c0c0c;color:#aaa;border:1px solid #292929;
+    font-size:10px;letter-spacing:1.5px;text-transform:uppercase;transition:.3s
+}
+.filter-btn:hover,.filter-btn.active{background:#fff;color:#000;border-color:#fff}
+.skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.skill-card{
+    background:#0b0b0b;border:1px solid #242424;border-radius:2px;overflow:hidden;
+    cursor:pointer;transition:.5s;position:relative
+}
+.skill-card:hover{transform:translateY(-9px);border-color:#555;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.skill-image{height:275px;overflow:hidden;position:relative;background:#111}
+.skill-image img{width:100%;height:100%;object-fit:cover;filter:grayscale(100%) contrast(1.08);transition:.7s}
+.skill-card:hover .skill-image img{transform:scale(1.07);filter:grayscale(20%) contrast(1.08)}
+.skill-level{
+    position:absolute;top:14px;left:14px;padding:7px 10px;background:rgba(0,0,0,.72);
+    border:1px solid rgba(255,255,255,.22);font-size:9px;letter-spacing:1.5px;text-transform:uppercase
+}
+.skill-body{padding:23px}
+.skill-body h3{font-size:23px;letter-spacing:-1px;margin-bottom:8px}
+.skill-body p{font-size:11px;color:#888;line-height:1.7}
+.skill-meta{display:flex;justify-content:space-between;margin-top:19px;padding-top:14px;border-top:1px solid #252525}
+.skill-meta span{font-size:9px;color:#777;letter-spacing:1px}
+
+/* ROADMAP */
+.roadmap{background:#000;border-top:1px solid #1b1b1b;border-bottom:1px solid #1b1b1b}
+.roadmap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.road-card{
+    min-height:235px;padding:28px;background:#080808;border:1px solid #242424;transition:.4s
+}
+.road-card:hover{background:#111;border-color:#555;transform:translateY(-7px)}
+.road-number{font-size:10px;color:#555;letter-spacing:2px}
+.road-card h3{font-size:25px;margin:55px 0 14px}
+.road-card p{font-size:11px;color:#777;line-height:1.8}
+
+/* EQUIPMENT */
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:17px}
+.product{background:#0c0c0c;border:1px solid #242424;border-radius:2px;overflow:hidden;transition:.4s}
+.product:hover{transform:translateY(-8px);border-color:#555;box-shadow:0 25px 60px rgba(0,0,0,.45)}
+.product-img{height:225px;overflow:hidden;background:#111}
+.product-img img{width:100%;height:100%;object-fit:cover;filter:grayscale(100%);transition:.6s}
+.product:hover img{transform:scale(1.07);filter:grayscale(30%)}
+.product-body{padding:20px}
+.product-body h3{font-size:16px}
+.product-body p{font-size:10px;color:#777;margin:7px 0 14px}
+.product-price{font-size:16px;font-weight:800;margin-bottom:13px}
+
+/* CTA */
+.cta{text-align:center;padding:155px 7%;position:relative;overflow:hidden}
+.cta::before{
+    content:"CALIX";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+    font-size:25vw;font-weight:900;letter-spacing:-14px;color:rgba(255,255,255,.025);white-space:nowrap
+}
+.cta>*{position:relative;z-index:2}
+.cta h2{font-size:clamp(54px,9vw,125px);line-height:.84;letter-spacing:-6px}
+.cta p{max-width:500px;margin:28px auto;color:#888;font-size:13px;line-height:1.8}
+
+/* MODALS */
+.modal{
+    position:fixed;inset:0;z-index:3000;display:none;padding:40px 5%;
+    background:rgba(0,0,0,.78);backdrop-filter:blur(16px);overflow:auto
+}
+.modal.active{display:block}
+.modal-container{
+    max-width:1200px;margin:auto;background:#0c0c0c;color:#fff;border:1px solid #282828;
+    border-radius:3px;overflow:hidden;animation:modalUp .45s ease
+}
+@keyframes modalUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+.modal-close{
+    position:fixed;right:25px;top:20px;z-index:4000;width:45px;height:45px;border-radius:50%;
+    border:1px solid #777;background:#080808;color:#fff;font-size:22px
+}
+.modal-top{display:grid;grid-template-columns:1fr 1fr}
+.modal-image{height:480px;background:#111}
+.modal-image img{width:100%;height:100%;object-fit:cover;filter:grayscale(100%)}
+.modal-info{padding:50px;display:flex;flex-direction:column;justify-content:center}
+.modal-info small{font-size:10px;letter-spacing:3px;color:#777;text-transform:uppercase}
+.modal-info h2{font-size:clamp(45px,5vw,70px);line-height:.9;letter-spacing:-4px;margin:15px 0}
+.modal-info p{font-size:13px;color:#888;line-height:1.8}
+.progress-overview{padding:38px 50px;border-top:1px solid #242424}
+.progress-title{font-size:21px;margin-bottom:20px}
+.progress-track{height:8px;background:#222;overflow:hidden}
+.progress-fill{height:100%;width:0;background:#fff;transition:1.2s ease}
+.progress-days{display:flex;justify-content:space-between;margin-top:9px;color:#777;font-size:10px}
+.routine-section{padding:38px 50px 55px}
+.routine-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.day-card{padding:20px;background:#101010;border:1px solid #292929}
+.day-number{font-size:9px;letter-spacing:2px;color:#666}
+.day-card h4{font-size:16px;margin:11px 0 4px}
+.day-card>p{font-size:9px;color:#666;margin-bottom:12px}
+.exercise{padding:9px 0;border-top:1px solid #242424}
+.exercise strong{display:block;font-size:10px}
+.exercise span{font-size:9px;color:#666}
+.week-plan{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.week-day{padding:16px 6px;text-align:center;border:1px solid #292929;background:#0d0d0d}
+.week-day strong{display:block;font-size:10px}
+.week-day span{display:block;font-size:8px;color:#666;margin-top:6px}
+.tutorial-box{margin:0 50px 55px;background:#070707;border:1px solid #242424}
+.tutorial-header{padding:20px 25px;display:flex;justify-content:space-between}
+.tutorial-header h3{font-size:15px}.tutorial-header span{font-size:9px;color:#666}
+.video-wrapper{position:relative;aspect-ratio:16/9}
+.video-wrapper img{width:100%;height:100%;object-fit:cover;filter:grayscale(100%)}
+.play-button{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.2)}
+.play-button a{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#000;font-size:23px;transition:.3s}
+.play-button a:hover{transform:scale(1.12)}
+
+/* CART */
+.cart-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,.68);backdrop-filter:blur(4px);
+    z-index:4999;opacity:0;visibility:hidden;transition:.3s
+}
+.cart-overlay.active{opacity:1;visibility:visible}
+.cart-drawer{
+    position:fixed;right:-430px;top:0;width:410px;height:100%;z-index:5000;
+    background:#0c0c0c;border-left:1px solid #292929;display:flex;flex-direction:column;
+    transition:right .4s cubic-bezier(.16,1,.3,1)
+}
+.cart-drawer.active{right:0}
+.cart-header{padding:24px 28px;border-bottom:1px solid #252525;display:flex;justify-content:space-between}
+.cart-header h3{font-size:19px}
+.close-cart,.close-checkout{background:none;border:0;color:inherit;font-size:24px}
+.cart-items{flex:1;overflow:auto;padding:20px 28px}
+.cart-item{display:flex;justify-content:space-between;gap:12px;padding:16px 0;border-bottom:1px solid #242424}
+.cart-item-info h4{font-size:12px;margin-bottom:5px}.cart-item-info span{font-size:10px;color:#777}
+.cart-item-controls{display:flex;align-items:center;gap:7px}
+.cart-footer{padding:24px 28px;border-top:1px solid #252525}
+.cart-total{display:flex;justify-content:space-between;font-weight:800;margin-bottom:18px}
+.remove-item{background:none;border:0;color:#ff6666;font-size:13px}
+
+/* CHECKOUT */
+.checkout-modal{position:fixed;inset:0;z-index:6000;background:rgba(0,0,0,.82);backdrop-filter:blur(12px);display:none;place-items:center;padding:20px}
+.checkout-modal.active{display:grid}
+.checkout-container{position:relative;width:100%;max-width:510px;background:#0d0d0d;border:1px solid #292929;padding:38px;border-radius:3px}
+.checkout-container h2{font-size:29px;margin-bottom:22px}
+.form-group{margin-bottom:19px}
+.form-group label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#777;margin-bottom:8px}
+.form-group input,.form-group textarea{
+    width:100%;padding:12px 14px;background:#151515;color:#fff;border:1px solid #303030;
+    outline:none;font:inherit;font-size:12px
+}
+.payment-options{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.payment-option{padding:14px;border:1px solid #303030;text-align:center;font-size:10px;cursor:pointer;transition:.3s}
+.payment-option.selected{border-color:#fff;background:#fff;color:#000}
+.payment-option input{display:none}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(35px);transition:1s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* LIGHT MODE — optional but keeps original theme functionality */
+body.light section,body.light .cta{background:#f4f4f2;color:#111}
+body.light .skill-card,body.light .product,body.light .road-card{background:#fff;color:#111;border-color:#ddd}
+body.light .skill-body,body.light .product-body{background:#fff}
+body.light .section-title{color:#111}
+body.light .section-description,body.light .skill-body p,body.light .product-body p{color:#666}
+body.light .roadmap{background:#111;color:#fff}
+body.light .marquee{background:#111}
+body.light .cta::before{color:rgba(0,0,0,.035)}
+body.light .modal-container{background:#f6f6f4;color:#111}
+body.light .routine-section,.light .progress-overview{border-color:#ddd}
+body.light .day-card,body.light .week-day{background:#fff;color:#111;border-color:#ddd}
+body.light .tutorial-box{background:#111;color:#fff}
+
+/* RESPONSIVE */
+@media(max-width:1050px){
+    .nav-links{gap:18px}
+    .skills-grid{grid-template-columns:repeat(2,1fr)}
+    .product-grid{grid-template-columns:repeat(2,1fr)}
+    .roadmap-grid{grid-template-columns:repeat(2,1fr)}
+    .routine-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+    nav{height:76px;padding:0 5%}
+    .logo{font-size:23px;letter-spacing:6px}
+    .nav-links{display:none}
+    .menu{display:block}
+    .hero{padding:0 6%;align-items:center}
+    .hero::before{
+        background-position:63% center;
+        background-image:
+        linear-gradient(90deg,rgba(0,0,0,.95),rgba(0,0,0,.52)),
+        linear-gradient(0deg,rgba(0,0,0,.9),transparent 60%),
+        url("ankiyt.png")
+    }
+    .hero-content{width:100%;padding-top:50px}
+    .eyebrow{font-size:8px;letter-spacing:3px}
+    .hero h1{font-size:clamp(51px,15vw,83px);letter-spacing:-3px}
+    .hero p{font-size:12px;max-width:360px}
+    .hero-buttons .btn{width:100%}
+    .hero-side{display:none}
+    .hero-scroll{left:6%}
+    section{padding:78px 6%}
+    .section-head{display:block;margin-bottom:38px}
+    .section-description{margin-top:20px}
+    .skills-grid,.product-grid,.roadmap-grid,.routine-grid{grid-template-columns:1fr}
+    .modal{padding:25px 3%}
+    .modal-top{grid-template-columns:1fr}
+    .modal-image{height:280px}
+    .modal-info{padding:30px}
+    .progress-overview,.routine-section{padding:28px 22px}
+    .tutorial-box{margin:0 22px 35px}
+    .week-plan{overflow:auto;grid-template-columns:repeat(7,95px)}
+    .cart-drawer{width:100%;right:-100%}
+    .checkout-container{padding:28px 22px}
+}
+@media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+
+<body>
+
+<div class="loader" id="loader"><div class="loader-text">CALIX</div></div>
+
+<nav id="navbar">
+    <a class="logo" href="#">CALIX</a>
+
+    <div class="nav-links">
+        <a href="#skills">Skills</a>
+        <a href="#equipment">Shop</a>
+        <a href="#equipment">Equipment</a>
+        <a href="#roadmap">Roadmap</a>
+        <a href="#start">Start</a>
+    </div>
+
+    <div class="nav-actions">
+        <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">◐</button>
+        <button class="icon-btn" onclick="toggleCart()" title="View cart">
+            🛒 <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <button class="icon-btn menu" onclick="toggleMobileMenu()">☰</button>
+    </div>
+</nav>
+
+<header class="hero" id="home">
+    <div class="hero-content reveal">
+        <div class="eyebrow">CALISTHENICS LIFESTYLE</div>
+
+        <h1>
+            MARTIAL ARTS.
+            <span>FROM KREUZBERG.</span>
+            <span class="outline">WITH LOVE.</span>
+        </h1>
+
+        <p>
+            Train your body. Master your skills.
+            Join a community that lives for progress.
+            Follow structured progressions, daily routines and
+            tutorials designed around real calisthenics skills.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="#skills" class="btn primary shine">START YOUR JOURNEY &nbsp; →</a>
+            <a href="#roadmap" class="btn shine">VIEW ROADMAP</a>
+        </div>
+    </div>
+
+    <div class="hero-side">
+        <span>STRONGER</span>
+        <span>SKILLS</span>
+        <span>BIGGER</span>
+        <span>DREAMS</span>
+    </div>
+
+    <div class="hero-scroll">SCROLL TO EXPLORE</div>
+</header>
+
+<div class="marquee">
+    <div class="marquee-track">
+        <span>STRENGTH</span><span>MOBILITY</span><span>CONTROL</span><span>CALISTHENICS</span><span>DISCIPLINE</span>
+        <span>STRENGTH</span><span>MOBILITY</span><span>CONTROL</span><span>CALISTHENICS</span><span>DISCIPLINE</span>
+    </div>
+</div>
+
+<section id="skills">
+    <div class="section-head reveal">
+        <div>
+            <div class="section-label">01 / SKILL LIBRARY</div>
+            <h2 class="section-title">Learn<br>the skills.</h2>
+        </div>
+        <p class="section-description">
+            Select a skill to see its estimated progression timeline,
+            daily exercises, weekly schedule, requirements and tutorial.
+        </p>
+    </div>
+
+    <div class="skill-filters">
+        <button class="filter-btn active" onclick="filterSkills('all',this)">All</button>
+        <button class="filter-btn" onclick="filterSkills('beginner',this)">Beginner</button>
+        <button class="filter-btn" onclick="filterSkills('intermediate',this)">Intermediate</button>
+        <button class="filter-btn" onclick="filterSkills('advanced',this)">Advanced</button>
+    </div>
+
+    <div class="skills-grid" id="skillsGrid"></div>
+</section>
+
+<section class="roadmap" id="roadmap">
+    <div class="section-head reveal">
+        <div>
+            <div class="section-label">02 / TRAINING SYSTEM</div>
+            <h2 class="section-title">Build<br>your base.</h2>
+        </div>
+        <p class="section-description">
+            Don't rush advanced skills. Build pulling, pushing,
+            core and mobility strength first.
+        </p>
+    </div>
+
+    <div class="roadmap-grid">
+        <div class="road-card reveal"><span class="road-number">01</span><h3>Foundation</h3><p>Push-ups, rows, squats, hollow body, plank and basic mobility.</p></div>
+        <div class="road-card reveal"><span class="road-number">02</span><h3>Strength</h3><p>Pull-ups, dips, pike push-ups, hanging leg raises and stronger core.</p></div>
+        <div class="road-card reveal"><span class="road-number">03</span><h3>Skill</h3><p>L-sit, handstand, muscle-up, front lever and handstand push-up.</p></div>
+        <div class="road-card reveal"><span class="road-number">04</span><h3>Mastery</h3><p>Planche, human flag, one-arm skills and advanced combinations.</p></div>
+    </div>
+</section>
+
+<section id="equipment">
+    <div class="section-head reveal">
+        <div>
+            <div class="section-label">03 / EQUIPMENT</div>
+            <h2 class="section-title">Train<br>better.</h2>
+        </div>
+        <p class="section-description">
+            Simple equipment can make progression faster and more accessible.
+        </p>
+    </div>
+
+    <div class="product-grid">
+        <div class="product reveal">
+            <div class="product-img"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Paraletki%2030cm%20Emechanik%20druk%203D%20%2B%20drewno%20bukowe.jpg" alt="Wooden Parallettes"></div>
+            <div class="product-body"><h3>Wooden Parallettes</h3><p>L-sit · Planche · Handstand</p><div class="product-price">₹2,499</div><button class="btn small full" onclick="addToCart('Wooden Parallettes',2499)">Add to cart</button></div>
+        </div>
+
+        <div class="product reveal">
+            <div class="product-img"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Pull%20up%20bar%20stand.jpg" alt="Pull Up Bar"></div>
+            <div class="product-body"><h3>Pull Up Bar</h3><p>Pull-ups · Muscle-up · Front lever</p><div class="product-price">₹1,899</div><button class="btn small full" onclick="addToCart('Pull Up Bar',1899)">Add to cart</button></div>
+        </div>
+
+        <div class="product reveal">
+            <div class="product-img"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Gymnastics%20rings%20hung%20from%20a%20doorway%20pull-up%20bar%2001.jpg" alt="Gymnastic Rings"></div>
+            <div class="product-body"><h3>Gymnastic Rings</h3><p>Muscle-up · Dips · Ring strength</p><div class="product-price">₹1,699</div><button class="btn small full" onclick="addToCart('Gymnastic Rings',1699)">Add to cart</button></div>
+        </div>
+
+        <div class="product reveal">
+            <div class="product-img"><img src="https://commons.wikimedia.org/wiki/Special:Redirect/file/Resistance%20Band.jpg" alt="Resistance Bands"></div>
+            <div class="product-body"><h3>Resistance Bands</h3><p>Assistance · Mobility · Warm-up</p><div class="product-price">₹599</div><button class="btn small full" onclick="addToCart('Resistance Bands',599)">Add to cart</button></div>
+        </div>
+    </div>
+</section>
+
+<section class="cta" id="start">
+    <div class="section-label">04 / BEGIN TODAY</div>
+    <h2>CONTROL<br>YOUR BODY.</h2>
+    <p>Choose one skill. Follow the progression. Train consistently. Track your progress.</p>
+    <a href="#skills" class="btn primary">CHOOSE A SKILL →</a>
+</section>
+
+<footer style="padding:45px 7%;border-top:1px solid #222;background:#000;display:flex;justify-content:space-between;gap:20px">
+    <div class="logo">CALIX</div>
+    <p style="font-size:10px;color:#666">© 2026 CALIX — Calisthenics Skill Academy</p>
+    <p style="font-size:10px;color:#666">Train smart. Progress patiently.</p>
+</footer>
+
+<!-- CART -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header"><h3>Your Cart</h3><button class="close-cart" onclick="toggleCart()">×</button></div>
+    <div class="cart-items" id="cartItemsContainer"><p style="color:#666;text-align:center;margin-top:40px">Your cart is empty.</p></div>
+    <div class="cart-footer">
+        <div class="cart-total"><span>Total:</span><span id="cartTotalPrice">₹0</span></div>
+        <button class="btn primary full" onclick="openCheckout()">PROCEED TO BUY</button>
+    </div>
+</div>
+
+<!-- CHECKOUT -->
+<div class="checkout-modal" id="checkoutModal">
+    <div class="checkout-container">
+        <button class="close-checkout" onclick="closeCheckout()" style="position:absolute;right:20px;top:15px">×</button>
+        <h2>Checkout</h2>
+        <form id="checkoutForm" onsubmit="processOrder(event)">
+            <div class="form-group">
+                <label>Delivery Place / Address</label>
+                <textarea id="deliveryAddress" rows="3" placeholder="Enter your full street address, city, pin code..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Select Payment Method</label>
+                <div class="payment-options">
+                    <label class="payment-option selected" onclick="selectPayment(this)"><input type="radio" name="payment" value="GPay" checked>Google Pay</label>
+                    <label class="payment-option" onclick="selectPayment(this)"><input type="radio" name="payment" value="Credit Card">Credit Card</label>
+                    <label class="payment-option" onclick="selectPayment(this)"><input type="radio" name="payment" value="Cash on Delivery">Cash on Delivery</label>
+                    <label class="payment-option" onclick="selectPayment(this)"><input type="radio" name="payment" value="UPI">Other UPI</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn primary full">PLACE ORDER</button>
+        </form>
+    </div>
+</div>
+
+<!-- SKILL MODAL -->
+<div class="modal" id="skillModal">
+    <button class="modal-close" onclick="closeSkill()">×</button>
+
+    <div class="modal-container">
+        <div class="modal-top">
+            <div class="modal-image"><img id="modalImage" src="" alt="Skill"></div>
+
+            <div class="modal-info">
+                <small id="modalLevel"></small>
+                <h2 id="modalTitle"></h2>
+                <p id="modalDescription"></p>
+
+                <div class="hero-buttons">
+                    <a id="modalYoutube" href="#" target="_blank" class="btn primary">WATCH TUTORIAL →</a>
+                    <button onclick="closeSkill()" class="btn">CLOSE</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-overview">
+            <h3 class="progress-title">Estimated Progression</h3>
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-days"><span>Day 1</span><strong id="totalDays"></strong><span>Skill Goal</span></div>
+        </div>
+
+        <div class="routine-section">
+            <h3 class="progress-title">Daily Progression</h3>
+            <div class="routine-grid" id="routineGrid"></div>
+
+            <h3 class="progress-title" style="margin-top:45px">Weekly Schedule</h3>
+            <div class="week-plan" id="weekPlan"></div>
+        </div>
+
+        <div class="tutorial-box">
+            <div class="tutorial-header"><h3>Recommended Tutorial</h3><span>YouTube</span></div>
+            <div class="video-wrapper">
+                <img id="videoThumbnail" src="" alt="YouTube tutorial">
+                <div class="play-button"><a id="videoLink" href="#" target="_blank">▶</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const skills = [
+{
+id:"lsit",name:"L-Sit",level:"Beginner",days:30,
+description:"Build compression strength, shoulder support and core control to hold your body in an L position.",
+image:"https://i.ytimg.com/vi/Vhqb29wNAyY/hqdefault.jpg",video:"https://www.youtube.com/watch?v=Vhqb29wNAyY",videoId:"Vhqb29wNAyY",
+routine:[
+{day:"Days 1–7",title:"Foundation",exercises:[["Seated leg lifts","3 × 10"],["Tuck support hold","4 × 15 sec"],["Hollow body hold","3 × 20 sec"],["Plank","3 × 30 sec"]]},
+{day:"Days 8–14",title:"Tuck L-Sit",exercises:[["Tuck L-sit","5 × 10 sec"],["Compression lifts","3 × 12"],["Parallel bar support","4 × 20 sec"],["Hollow rocks","3 × 15"]]},
+{day:"Days 15–21",title:"One Leg",exercises:[["One-leg L-sit","4 × 10 sec"],["Tuck extensions","4 × 8"],["Seated compression","4 × 12"],["Plank","3 × 45 sec"]]},
+{day:"Days 22–30",title:"Full L-Sit",exercises:[["Full L-sit attempts","6 × max"],["L-sit leg lifts","4 × 8"],["Compression hold","4 × 20 sec"],["Hollow body","3 × 30 sec"]]}
+]},
+{
+id:"handstand",name:"Handstand",level:"Beginner",days:45,
+description:"Develop wrist preparation, shoulder mobility, balance and overhead body control.",
+image:"https://i.ytimg.com/vi/aXDxa79u0xQ/hqdefault.jpg",video:"https://www.youtube.com/watch?v=aXDxa79u0xQ",videoId:"aXDxa79u0xQ",
+routine:[
+{day:"Days 1–10",title:"Wrist + Wall",exercises:[["Wrist warm-up","5 min"],["Wall plank","3 × 30 sec"],["Wall walk","3 × 5"],["Chest-to-wall hold","4 × 20 sec"]]},
+{day:"Days 11–20",title:"Inversion",exercises:[["Wall handstand","5 × 20 sec"],["Wall shoulder taps","3 × 8"],["Pike push-up","4 × 8"],["Hollow hold","3 × 30 sec"]]},
+{day:"Days 21–30",title:"Balance",exercises:[["Kick-up practice","15 min"],["Wall toe pulls","4 × 8"],["Freestanding attempts","10 min"],["Pike compression","3 × 12"]]},
+{day:"Days 31–45",title:"Freestanding",exercises:[["Freestanding holds","15 min"],["Kick-up practice","10 min"],["Handstand shoulder shifts","3 × 10"],["Wrist mobility","5 min"]]}
+]},
+{
+id:"muscleup",name:"Muscle-Up",level:"Intermediate",days:60,
+description:"Combine explosive pulling, transition strength and straight-bar pushing to achieve your first muscle-up.",
+image:"https://i.ytimg.com/vi/OMsmCzJQGTE/hqdefault.jpg",video:"https://www.youtube.com/watch?v=OMsmCzJQGTE",videoId:"OMsmCzJQGTE",
+routine:[
+{day:"Days 1–15",title:"Pull Strength",exercises:[["Pull-ups","5 × 5"],["Scapular pull-ups","3 × 12"],["Explosive pull-ups","5 × 3"],["Hanging knee raises","3 × 12"]]},
+{day:"Days 16–30",title:"Explosive Pull",exercises:[["High pull-ups","5 × 3"],["Chest-to-bar pull-ups","4 × 5"],["Band muscle-up","4 × 5"],["Straight bar dips","4 × 8"]]},
+{day:"Days 31–45",title:"Transition",exercises:[["Jumping transition","5 × 5"],["Band muscle-up","5 × 3"],["Straight bar dips","5 × 8"],["Explosive pull-ups","4 × 3"]]},
+{day:"Days 46–60",title:"Muscle-Up",exercises:[["Muscle-up attempts","6 sets"],["High pull-ups","4 × 3"],["Bar dips","4 × 8"],["Negative muscle-up","3 × 3"]]}
+]},
+{
+id:"frontlever",name:"Front Lever",level:"Advanced",days:90,
+description:"Build straight-arm pulling strength and core tension to hold your body horizontally beneath the bar.",
+image:"https://i.ytimg.com/vi/rx0vr-teG7M/hqdefault.jpg",video:"https://www.youtube.com/watch?v=rx0vr-teG7M",videoId:"rx0vr-teG7M",
+routine:[
+{day:"Days 1–20",title:"Tuck Lever",exercises:[["Tuck front lever","5 × 10 sec"],["Scapular pulls","4 × 8"],["Australian rows","4 × 10"],["Hollow body","4 × 30 sec"]]},
+{day:"Days 21–45",title:"Advanced Tuck",exercises:[["Advanced tuck lever","5 × 10 sec"],["Front lever raises","4 × 5"],["Pull-ups","4 × 6"],["Dragon flag","3 × 6"]]},
+{day:"Days 46–70",title:"Straddle",exercises:[["Straddle lever","5 × 8 sec"],["Lever raises","4 × 5"],["Weighted pull-up","4 × 5"],["Hollow rocks","3 × 15"]]},
+{day:"Days 71–90",title:"Full Lever",exercises:[["Full front lever attempts","6 sets"],["Front lever hold","5 × max"],["Front lever raises","4 × 5"],["Pull-ups","4 × 8"]]}
+]},
+{
+id:"planche",name:"Planche",level:"Advanced",days:120,
+description:"An advanced straight-arm pushing skill requiring exceptional shoulder strength, wrist conditioning and core control.",
+image:"https://i.ytimg.com/vi/UZ-1jwG7aQ4/hqdefault.jpg",video:"https://www.youtube.com/watch?v=UZ-1jwG7aQ4",videoId:"UZ-1jwG7aQ4",
+routine:[
+{day:"Days 1–30",title:"Planche Base",exercises:[["Planche lean","5 × 15 sec"],["Pseudo planche push-up","4 × 8"],["Scapular push-up","4 × 12"],["Hollow body","4 × 30 sec"]]},
+{day:"Days 31–60",title:"Tuck Planche",exercises:[["Tuck planche","5 × 8 sec"],["Planche lean","4 × 20 sec"],["Pseudo planche push-up","4 × 8"],["Wrist conditioning","5 min"]]},
+{day:"Days 61–90",title:"Advanced Tuck",exercises:[["Advanced tuck planche","5 × 8 sec"],["Planche push-up negative","4 × 4"],["Planche lean","4 × 25 sec"],["Core compression","4 × 12"]]},
+{day:"Days 91–120",title:"Straddle",exercises:[["Straddle attempts","6 sets"],["Advanced tuck planche","4 × max"],["Planche push-up","4 × 5"],["Wrist mobility","8 min"]]}
+]},
+{
+id:"humanflag",name:"Human Flag",level:"Advanced",days:90,
+description:"Learn lateral body control by developing shoulder, lat, oblique and grip strength.",
+image:"https://i.ytimg.com/vi/Cl_jIUGYh2w/hqdefault.jpg",video:"https://www.youtube.com/watch?v=Cl_jIUGYh2w",videoId:"Cl_jIUGYh2w",
+routine:[
+{day:"Days 1–20",title:"Side Strength",exercises:[["Side plank","4 × 30 sec"],["Pull-ups","4 × 6"],["Pike push-up","4 × 8"],["Hanging knee raise","3 × 12"]]},
+{day:"Days 21–45",title:"Tuck Flag",exercises:[["Tuck flag","5 × 8 sec"],["Side plank raises","3 × 12"],["Pull-ups","4 × 8"],["Dips","4 × 8"]]},
+{day:"Days 46–70",title:"One Leg Flag",exercises:[["One-leg flag","5 × 8 sec"],["Flag negatives","4 × 3"],["Hanging oblique raises","3 × 10"],["Pull-ups","4 × 6"]]},
+{day:"Days 71–90",title:"Full Flag",exercises:[["Human flag attempts","6 sets"],["Flag negatives","4 × 3"],["Side plank","3 × 45 sec"],["Pull-ups","4 × 8"]]}
+]},
+{
+id:"hspu",name:"Handstand Push-Up",level:"Advanced",days:90,
+description:"Develop overhead pressing strength and handstand control to perform strict handstand push-ups.",
+image:"https://i.ytimg.com/vi/7wSZnHQZChI/hqdefault.jpg",video:"https://www.youtube.com/watch?v=7wSZnHQZChI",videoId:"7wSZnHQZChI",
+routine:[
+{day:"Days 1–20",title:"Pressing Base",exercises:[["Pike push-ups","4 × 8"],["Wall handstand","4 × 30 sec"],["Dips","4 × 8"],["Hollow hold","3 × 30 sec"]]},
+{day:"Days 21–45",title:"Wall HSPU",exercises:[["Wall HSPU negative","5 × 3"],["Pike push-up","4 × 10"],["Wall handstand","4 × 40 sec"],["Shoulder taps","3 × 10"]]},
+{day:"Days 46–70",title:"Partial HSPU",exercises:[["Partial HSPU","5 × 5"],["Deficit pike push-up","4 × 8"],["Wall HSPU","4 × 5"],["Handstand hold","4 × 40 sec"]]},
+{day:"Days 71–90",title:"Strict HSPU",exercises:[["Strict HSPU attempts","6 sets"],["Wall HSPU","4 × 6"],["Handstand hold","4 × 45 sec"],["Pike push-up","3 × 12"]]}
+]},
+{
+id:"backlever",name:"Back Lever",level:"Intermediate",days:60,
+description:"Develop straight-arm strength and shoulder extension control for a strong horizontal back lever.",
+image:"https://i.ytimg.com/vi/vRQbC290uxQ/hqdefault.jpg",video:"https://www.youtube.com/watch?v=vRQbC290uxQ",videoId:"vRQbC290uxQ",
+routine:[
+{day:"Days 1–15",title:"German Hang",exercises:[["German hang","4 × 20 sec"],["Skin-the-cat","3 × 5"],["Tuck hold","4 × 10 sec"],["Scapular pulls","3 × 10"]]},
+{day:"Days 16–30",title:"Tuck Lever",exercises:[["Tuck back lever","5 × 10 sec"],["Skin-the-cat","4 × 5"],["German hang","3 × 30 sec"],["Rows","4 × 10"]]},
+{day:"Days 31–45",title:"Advanced Tuck",exercises:[["Advanced tuck","5 × 8 sec"],["Back lever negative","4 × 3"],["Skin-the-cat","3 × 6"],["Pull-ups","4 × 6"]]},
+{day:"Days 46–60",title:"Full Lever",exercises:[["Back lever attempts","6 sets"],["Negative back lever","4 × 3"],["Skin-the-cat","3 × 5"],["Hollow body","3 × 30 sec"]]}
+]},
+{
+id:"elbowlever",name:"Elbow Lever",level:"Beginner",days:21,
+description:"A beginner-friendly balance skill that teaches body tension, wrist control and center-of-mass awareness.",
+image:"https://i.ytimg.com/vi/BBVaD8N6S1s/hqdefault.jpg",video:"https://www.youtube.com/shorts/BBVaD8N6S1s",videoId:"BBVaD8N6S1s",
+routine:[
+{day:"Days 1–7",title:"Balance",exercises:[["Crow pose","4 × 20 sec"],["Wrist warm-up","5 min"],["Plank","3 × 30 sec"],["Frog stand","4 × 15 sec"]]},
+{day:"Days 8–14",title:"Elbow Position",exercises:[["Elbow lever tuck","5 × 10 sec"],["Frog stand","4 × 20 sec"],["Wrist lean","4 × 15 sec"],["Hollow hold","3 × 20 sec"]]},
+{day:"Days 15–21",title:"Full Lever",exercises:[["Elbow lever","6 attempts"],["Elbow lever negative","4 × 3"],["Planche lean","3 × 15 sec"],["Wrist mobility","5 min"]]}
+]}
+];
+
+/* CART */
+let cart=[];
+function toggleCart(){
+    document.getElementById("cartDrawer").classList.toggle("active");
+    document.getElementById("cartOverlay").classList.toggle("active");
+}
+function addToCart(name,price){
+    const item=cart.find(i=>i.name===name);
+    if(item)item.quantity++;
+    else cart.push({name,price,quantity:1});
+    updateCartUI();document.getElementById("cartDrawer").classList.add("active");document.getElementById("cartOverlay").classList.add("active");
+}
+function updateQuantity(name,change){
+    const item=cart.find(i=>i.name===name);
+    if(item){item.quantity+=change;if(item.quantity<=0)cart=cart.filter(i=>i.name!==name)}
+    updateCartUI();
+}
+function removeFromCart(name){cart=cart.filter(i=>i.name!==name);updateCartUI()}
+function updateCartUI(){
+    const box=document.getElementById("cartItemsContainer"),count=document.getElementById("cartCount"),totalEl=document.getElementById("cartTotalPrice");
+    let total=0,n=0;
+    if(!cart.length)box.innerHTML='<p style="color:#666;text-align:center;margin-top:40px">Your cart is empty.</p>';
+    else{
+        box.innerHTML="";
+        cart.forEach(item=>{
+            n+=item.quantity;total+=item.price*item.quantity;
+            const row=document.createElement("div");row.className="cart-item";
+            row.innerHTML=`
+            <div class="cart-item-info"><h4>${item.name}</h4><span>₹${item.price.toLocaleString("en-IN")} × ${item.quantity}</span></div>
+            <div class="cart-item-controls">
+                <button class="btn small" onclick="updateQuantity('${item.name}',-1)">−</button>
+                <span>${item.quantity}</span>
+                <button class="btn small" onclick="updateQuantity('${item.name}',1)">+</button>
+                <button class="remove-item" onclick="removeFromCart('${item.name}')">×</button>
+            </div>`;
+            box.appendChild(row);
+        });
+    }
+    count.textContent=n;totalEl.textContent="₹"+total.toLocaleString("en-IN");
+}
+function openCheckout(){
+    if(!cart.length){alert("Your cart is empty!");return}
+    toggleCart();document.getElementById("checkoutModal").classList.add("active");
+}
+function closeCheckout(){document.getElementById("checkoutModal").classList.remove("active")}
+function selectPayment(el){
+    document.querySelectorAll(".payment-option").forEach(x=>x.classList.remove("selected"));
+    el.classList.add("selected");el.querySelector("input").checked=true;
+}
+function processOrder(e){
+    e.preventDefault();
+    const address=document.getElementById("deliveryAddress").value;
+    const payment=document.querySelector('input[name="payment"]:checked').value;
+    alert(`Order Placed Successfully!\n\nDelivery Address: ${address}\nPayment Method: ${payment}\n\nThank you for shopping with CALIX!`);
+    cart=[];updateCartUI();closeCheckout();document.getElementById("checkoutForm").reset();
+}
+
+/* SKILLS */
+const skillsGrid=document.getElementById("skillsGrid");
+function renderSkills(filter="all"){
+    skillsGrid.innerHTML="";
+    skills.filter(s=>filter==="all"||s.level.toLowerCase()===filter).forEach((skill,index)=>{
+        const card=document.createElement("article");card.className="skill-card reveal";
+        card.onclick=()=>openSkill(skill.id);
+        card.innerHTML=`
+        <div class="skill-image">
+            <img src="${skill.image}" alt="${skill.name}" loading="lazy">
+            <div class="skill-level">${skill.level}</div>
+        </div>
+        <div class="skill-body">
+            <h3>${skill.name}</h3><p>${skill.description}</p>
+            <div class="skill-meta"><span>${skill.days} DAYS</span><span>VIEW PROGRESSION →</span></div>
+        </div>`;
+        skillsGrid.appendChild(card);
+        setTimeout(()=>card.classList.add("visible"),index*70);
+    });
+}
+function filterSkills(filter,button){
+    document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active"));
+    button.classList.add("active");renderSkills(filter);
+}
+
+/* SKILL MODAL */
+function openSkill(id){
+    const skill=skills.find(s=>s.id===id);if(!skill)return;
+    document.getElementById("modalImage").src=skill.image;
+    document.getElementById("modalTitle").textContent=skill.name;
+    document.getElementById("modalLevel").textContent=`${skill.level} · ${skill.days} DAY ROADMAP`;
+    document.getElementById("modalDescription").textContent=skill.description;
+    document.getElementById("modalYoutube").href=skill.video;
+    document.getElementById("videoLink").href=skill.video;
+    document.getElementById("videoThumbnail").src=`https://i.ytimg.com/vi/${skill.videoId}/hqdefault.jpg`;
+    document.getElementById("totalDays").textContent=`${skill.days} days`;
+
+    const routine=document.getElementById("routineGrid");routine.innerHTML="";
+    skill.routine.forEach((phase,index)=>{
+        const card=document.createElement("div");card.className="day-card";
+        card.innerHTML=`<span class="day-number">PHASE ${index+1}</span><h4>${phase.day}</h4><p>${phase.title}</p>`;
+        phase.exercises.forEach(ex=>{
+            card.innerHTML+=`<div class="exercise"><strong>${ex[0]}</strong><span>${ex[1]}</span></div>`;
+        });
+        routine.appendChild(card);
+    });
+    createWeeklyPlan();
+    document.getElementById("skillModal").classList.add("active");
+    document.body.style.overflow="hidden";
+    requestAnimationFrame(()=>document.getElementById("progressFill").style.width=(skill.routine.length/4*100)+"%");
+}
+function createWeeklyPlan(){
+    const plan=document.getElementById("weekPlan");plan.innerHTML="";
+    [["MON","Skill + Strength"],["TUE","Skill Practice"],["WED","Strength"],["THU","Skill Practice"],["FRI","Skill + Core"],["SAT","Light Practice"],["SUN","REST"]].forEach(d=>{
+        const el=document.createElement("div");el.className="week-day";el.innerHTML=`<strong>${d[0]}</strong><span>${d[1]}</span>`;plan.appendChild(el);
+    });
+}
+function closeSkill(){
+    document.getElementById("skillModal").classList.remove("active");
+    document.body.style.overflow="";
+    document.getElementById("progressFill").style.width="0";
+}
+document.getElementById("skillModal").addEventListener("click",e=>{if(e.target.id==="skillModal")closeSkill()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeSkill();closeCheckout()}});
+
+/* THEME */
+function toggleTheme(){
+    document.body.classList.toggle("light");
+    localStorage.setItem("calixTheme",document.body.classList.contains("light")?"light":"dark");
+}
+if(localStorage.getItem("calixTheme")==="light")document.body.classList.add("light");
+
+/* MOBILE MENU */
+function toggleMobileMenu(){
+    const links=document.querySelector(".nav-links");
+    const visible=links.style.display==="flex";
+    links.style.display=visible?"none":"flex";
+    if(!visible){
+        links.style.position="absolute";links.style.top="76px";links.style.left="0";links.style.right="0";
+        links.style.padding="22px";links.style.flexDirection="column";links.style.background="rgba(0,0,0,.96)";
+    }
+}
+
+/* REVEAL */
+const observer=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible")});
+},{threshold:.1});
+function observeReveal(){document.querySelectorAll(".reveal").forEach(el=>observer.observe(el))}
+
+/* NAV + PARALLAX */
+window.addEventListener("scroll",()=>{
+    const y=window.scrollY;
+    document.getElementById("navbar").classList.toggle("scrolled",y>30);
+    const content=document.querySelector(".hero-content");
+    if(content&&y<innerHeight){
+        content.style.transform=`translateY(${y*.08}px)`;
+        content.style.opacity=Math.max(.08,1-y/(innerHeight*.82));
+    }
+});
+
+/* IMAGE FALLBACK */
+document.addEventListener("error",e=>{
+    const img=e.target;if(img.tagName!=="IMG"||img.dataset.fallback)return;
+    img.dataset.fallback="1";
+    const skill=skills.find(s=>s.name.toLowerCase()===img.alt.toLowerCase());
+    img.src=skill&&skill.videoId?`https://i.ytimg.com/vi/${skill.videoId}/hqdefault.jpg`:"ankiyt.png";
+},true);
+
+/* INIT */
+window.addEventListener("load",()=>{
+    renderSkills();observeReveal();
+    setTimeout(()=>document.getElementById("loader").classList.add("hide"),650);
+});
+</script>
+
+</body>
+</html>
