@@ -329,6 +329,76 @@ body.light .routine-section,.light .progress-overview{border-color:#ddd}
 body.light .day-card,body.light .week-day{background:#fff;color:#111;border-color:#ddd}
 body.light .tutorial-box{background:#111;color:#fff}
 
+
+/* AUTHENTICATION */
+.auth-modal{
+    position:fixed;inset:0;z-index:8000;display:none;place-items:center;
+    padding:22px;background:rgba(0,0,0,.84);backdrop-filter:blur(20px);
+}
+.auth-modal.active{display:grid}
+.auth-box{
+    width:min(440px,100%);background:#0c0c0c;color:#fff;border:1px solid #2d2d2d;
+    padding:42px 38px;position:relative;box-shadow:0 35px 100px rgba(0,0,0,.7);
+    animation:authUp .5s cubic-bezier(.16,1,.3,1);
+}
+@keyframes authUp{from{opacity:0;transform:translateY(30px) scale(.98)}to{opacity:1;transform:none}}
+.auth-brand{text-align:center;font-size:25px;font-weight:900;letter-spacing:7px;margin-bottom:9px}
+.auth-subtitle{text-align:center;color:#777;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-bottom:28px}
+.auth-tabs{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #292929;margin-bottom:25px}
+.auth-tab{
+    background:none;border:0;border-bottom:2px solid transparent;color:#777;
+    padding:12px 8px;font-size:10px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
+}
+.auth-tab.active{color:#fff;border-bottom-color:#fff}
+.auth-form{display:none}.auth-form.active{display:block}
+.auth-form .form-group{margin-bottom:16px}
+.auth-form input{
+    width:100%;padding:14px;background:#151515;color:#fff;border:1px solid #303030;
+    outline:none;font:inherit;font-size:12px;transition:.25s;
+}
+.auth-form input:focus{border-color:#aaa;background:#181818}
+.auth-password{position:relative}
+.auth-password input{padding-right:65px}
+.auth-password button{
+    position:absolute;right:0;top:0;height:100%;width:55px;background:none;border:0;color:#777;
+    font-size:9px;letter-spacing:1px;text-transform:uppercase;
+}
+.auth-check{display:flex;align-items:center;gap:8px;color:#777;font-size:9px;margin:4px 0 19px}
+.auth-check input{width:auto}
+.auth-submit{margin-top:5px}
+.auth-note{text-align:center;color:#666;font-size:9px;line-height:1.7;margin-top:18px}
+.auth-note button{background:none;border:0;color:#fff;text-decoration:underline;font-size:inherit}
+.auth-close{
+    position:absolute;right:15px;top:13px;width:35px;height:35px;border-radius:50%;
+    border:1px solid #444;background:#111;color:#fff;font-size:20px;
+}
+.auth-error{display:none;color:#ff7777;font-size:9px;margin:-5px 0 14px;line-height:1.5}
+.auth-error.show{display:block}
+.auth-success{text-align:center;padding:15px 0 5px;display:none}
+.auth-success.active{display:block}
+.auth-success .mark{font-size:35px;margin-bottom:12px}
+.auth-success h3{font-size:20px;margin-bottom:8px}
+.auth-success p{font-size:10px;color:#777;line-height:1.7}
+.user-btn{
+    width:auto;padding:0 14px;border-radius:25px;font-size:9px;letter-spacing:1px;
+    text-transform:uppercase;white-space:nowrap;
+}
+.user-menu{
+    position:fixed;right:7%;top:88px;z-index:2100;display:none;background:#0c0c0c;
+    border:1px solid #292929;min-width:180px;padding:8px;box-shadow:0 20px 50px rgba(0,0,0,.5);
+}
+.user-menu.active{display:block}
+.user-menu button{
+    width:100%;padding:12px 14px;background:none;border:0;color:#aaa;text-align:left;
+    font-size:9px;letter-spacing:1.5px;text-transform:uppercase;
+}
+.user-menu button:hover{background:#fff;color:#000}
+body.light .auth-box{background:#f6f6f4;color:#111;border-color:#ccc}
+body.light .auth-tab{color:#777} body.light .auth-tab.active{color:#111;border-bottom-color:#111}
+body.light .auth-form input{background:#fff;color:#111;border-color:#ccc}
+body.light .auth-password button{color:#555}
+body.light .user-menu{background:#f6f6f4;color:#111;border-color:#ccc}
+
 /* RESPONSIVE */
 @media(max-width:1050px){
     .nav-links{gap:18px}
@@ -370,12 +440,14 @@ body.light .tutorial-box{background:#111;color:#fff}
     .week-plan{overflow:auto;grid-template-columns:repeat(7,95px)}
     .cart-drawer{width:100%;right:-100%}
     .checkout-container{padding:28px 22px}
+    .auth-box{padding:34px 22px}
+    .user-btn{padding:0 10px;font-size:8px}
+    .user-menu{right:5%;top:70px}
 }
 @media(prefers-reduced-motion:reduce){
     *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"\>\</script>
 </head>
 
 <body>
@@ -395,6 +467,7 @@ body.light .tutorial-box{background:#111;color:#fff}
 
     <div class="nav-actions">
         <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">◐</button>
+        <button class="icon-btn user-btn" id="accountButton" onclick="openAuth()" title="Login or Sign Up">LOGIN</button>
         <button class="icon-btn" onclick="toggleCart()" title="View cart">
             🛒 <span class="cart-count" id="cartCount">0</span>
         </button>
@@ -530,6 +603,73 @@ body.light .tutorial-box{background:#111;color:#fff}
     <p style="font-size:10px;color:#666">© 2026 CALIX — Calisthenics Skill Academy</p>
     <p style="font-size:10px;color:#666">Train smart. Progress patiently.</p>
 </footer>
+
+
+<!-- LOGIN / SIGN UP -->
+<div class="auth-modal" id="authModal">
+    <div class="auth-box" id="authBox">
+        <button class="auth-close" onclick="closeAuth()" aria-label="Close">×</button>
+        <div class="auth-brand">CALIX</div>
+        <div class="auth-subtitle">Train. Progress. Master.</div>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" id="loginTab" onclick="switchAuth('login')">Login</button>
+            <button class="auth-tab" id="signupTab" onclick="switchAuth('signup')">Sign Up</button>
+        </div>
+
+        <div class="auth-error" id="authError"></div>
+
+        <form class="auth-form active" id="loginForm" onsubmit="loginUser(event)">
+            <div class="form-group">
+                <label>Email</label>
+                <input id="loginEmail" type="email" placeholder="Enter your email" autocomplete="email" required>
+            </div>
+            <div class="form-group auth-password">
+                <label>Password</label>
+                <input id="loginPassword" type="password" placeholder="Enter your password" autocomplete="current-password" required>
+                <button type="button" onclick="togglePassword('loginPassword',this)">SHOW</button>
+            </div>
+            <label class="auth-check"><input type="checkbox" id="rememberMe"> Remember me</label>
+            <button class="btn primary full auth-submit" type="submit">LOGIN TO CALIX →</button>
+            <div class="auth-note">New to CALIX? <button type="button" onclick="switchAuth('signup')">Create an account</button></div>
+        </form>
+
+        <form class="auth-form" id="signupForm" onsubmit="signupUser(event)">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input id="signupName" type="text" placeholder="Enter your name" autocomplete="name" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input id="signupEmail" type="email" placeholder="Enter your email" autocomplete="email" required>
+            </div>
+            <div class="form-group auth-password">
+                <label>Password</label>
+                <input id="signupPassword" type="password" placeholder="Create a password" minlength="6" autocomplete="new-password" required>
+                <button type="button" onclick="togglePassword('signupPassword',this)">SHOW</button>
+            </div>
+            <div class="form-group auth-password">
+                <label>Confirm Password</label>
+                <input id="signupConfirm" type="password" placeholder="Confirm your password" minlength="6" autocomplete="new-password" required>
+                <button type="button" onclick="togglePassword('signupConfirm',this)">SHOW</button>
+            </div>
+            <label class="auth-check"><input type="checkbox" required> I agree to the CALIX terms</label>
+            <button class="btn primary full auth-submit" type="submit">CREATE CALIX ACCOUNT →</button>
+            <div class="auth-note">Already have an account? <button type="button" onclick="switchAuth('login')">Login here</button></div>
+        </form>
+
+        <div class="auth-success" id="authSuccess">
+            <div class="mark">✓</div>
+            <h3>Welcome to CALIX</h3>
+            <p id="authSuccessText">Your account is ready.</p>
+        </div>
+    </div>
+</div>
+
+<div class="user-menu" id="userMenu">
+    <button onclick="openProfile()">My Account</button>
+    <button onclick="logoutUser()">Log Out</button>
+</div>
 
 <!-- CART -->
 <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
@@ -870,10 +1010,139 @@ document.addEventListener("error",e=>{
     img.src=skill&&skill.videoId?`https://i.ytimg.com/vi/${skill.videoId}/hqdefault.jpg`:"ankiyt.png";
 },true);
 
+
+/* AUTHENTICATION */
+const AUTH_KEY = "calixAuthUser";
+const AUTH_USERS_KEY = "calixUsers";
+
+function getAuthUser(){
+    try{return JSON.parse(localStorage.getItem(AUTH_KEY)||"null")}catch(e){return null}
+}
+function getUsers(){
+    try{return JSON.parse(localStorage.getItem(AUTH_USERS_KEY)||"[]")}catch(e){return []}
+}
+function saveUsers(users){localStorage.setItem(AUTH_USERS_KEY,JSON.stringify(users))}
+function openAuth(mode="login"){
+    document.getElementById("authModal").classList.add("active");
+    document.body.style.overflow="hidden";
+    document.getElementById("authSuccess").classList.remove("active");
+    document.getElementById("loginForm").style.display="";
+    document.getElementById("signupForm").style.display="";
+    document.querySelector(".auth-tabs").style.display="grid";
+    switchAuth(mode);
+}
+function closeAuth(){
+    document.getElementById("authModal").classList.remove("active");
+    document.body.style.overflow="";
+    clearAuthError();
+}
+function switchAuth(mode){
+    clearAuthError();
+    document.getElementById("loginTab").classList.toggle("active",mode==="login");
+    document.getElementById("signupTab").classList.toggle("active",mode==="signup");
+    document.getElementById("loginForm").classList.toggle("active",mode==="login");
+    document.getElementById("signupForm").classList.toggle("active",mode==="signup");
+}
+function showAuthError(message){
+    const el=document.getElementById("authError");el.textContent=message;el.classList.add("show");
+}
+function clearAuthError(){
+    const el=document.getElementById("authError");el.textContent="";el.classList.remove("show");
+}
+function togglePassword(id,button){
+    const input=document.getElementById(id);
+    input.type=input.type==="password"?"text":"password";
+    button.textContent=input.type==="password"?"SHOW":"HIDE";
+}
+function loginUser(e){
+    e.preventDefault();clearAuthError();
+    const email=document.getElementById("loginEmail").value.trim().toLowerCase();
+    const password=document.getElementById("loginPassword").value;
+    const user=getUsers().find(u=>u.email===email && u.password===password);
+    if(!user){
+        showAuthError("Incorrect email or password. If you are new to CALIX, create an account first.");
+        return;
+    }
+    localStorage.setItem(AUTH_KEY,JSON.stringify({name:user.name,email:user.email}));
+    updateAccountUI();
+    showAuthSuccess(`Welcome back, ${user.name}. Your CALIX session is active.`);
+}
+function signupUser(e){
+    e.preventDefault();clearAuthError();
+    const name=document.getElementById("signupName").value.trim();
+    const email=document.getElementById("signupEmail").value.trim().toLowerCase();
+    const password=document.getElementById("signupPassword").value;
+    const confirm=document.getElementById("signupConfirm").value;
+    if(password!==confirm){showAuthError("Passwords do not match.");return}
+    const users=getUsers();
+    if(users.some(u=>u.email===email)){showAuthError("An account with this email already exists. Please login.");return}
+    users.push({name,email,password});
+    saveUsers(users);
+    localStorage.setItem(AUTH_KEY,JSON.stringify({name,email}));
+    updateAccountUI();
+    showAuthSuccess(`Account created successfully. Welcome to CALIX, ${name}.`);
+}
+function showAuthSuccess(message){
+    document.getElementById("loginForm").style.display="none";
+    document.getElementById("signupForm").style.display="none";
+    document.querySelector(".auth-tabs").style.display="none";
+    clearAuthError();
+    document.getElementById("authSuccessText").textContent=message;
+    document.getElementById("authSuccess").classList.add("active");
+    setTimeout(()=>closeAuth(),1400);
+}
+function updateAccountUI(){
+    const user=getAuthUser(),btn=document.getElementById("accountButton");
+    if(!btn)return;
+    if(user){
+        btn.textContent=(user.name||"ACCOUNT").slice(0,10).toUpperCase();
+        btn.title="Account menu";
+        btn.onclick=toggleUserMenu;
+    }else{
+        btn.textContent="LOGIN";
+        btn.title="Login or Sign Up";
+        btn.onclick=()=>openAuth("login");
+    }
+}
+function toggleUserMenu(){
+    document.getElementById("userMenu").classList.toggle("active");
+}
+function openProfile(){
+    const user=getAuthUser();
+    document.getElementById("userMenu").classList.remove("active");
+    if(user)alert(`CALIX ACCOUNT\n\nName: ${user.name}\nEmail: ${user.email}`);
+}
+function logoutUser(){
+    localStorage.removeItem(AUTH_KEY);
+    document.getElementById("userMenu").classList.remove("active");
+    updateAccountUI();
+}
+document.getElementById("authModal").addEventListener("click",e=>{
+    if(e.target.id==="authModal")closeAuth();
+});
+document.addEventListener("click",e=>{
+    const menu=document.getElementById("userMenu"),btn=document.getElementById("accountButton");
+    if(menu.classList.contains("active") && !menu.contains(e.target) && e.target!==btn)menu.classList.remove("active");
+});
+
+/* First-visit authentication prompt: runs after the existing CALIX loader finishes. */
+function runFirstVisitAuth(){
+    const hasUser=getAuthUser();
+    const seen=localStorage.getItem("calixAuthPromptSeen");
+    if(!hasUser && !seen){
+        localStorage.setItem("calixAuthPromptSeen","1");
+        setTimeout(()=>openAuth("login"),900);
+    }
+}
+
 /* INIT */
 window.addEventListener("load",()=>{
     renderSkills();observeReveal();
-    setTimeout(()=>document.getElementById("loader").classList.add("hide"),650);
+    setTimeout(()=>{
+        document.getElementById("loader").classList.add("hide");
+        runFirstVisitAuth();
+    },650);
+    updateAccountUI();
 });
 </script>
 
